@@ -12,11 +12,16 @@ class Tournament extends Model
 
     public function matches()
     {
-        return $this->hasMany(MatchModel::class);
+        return $this->belongsToMany(
+        MatchModel::class,
+        'tournament_matches', // pivot table name
+        'tournament_id',      // foreign key on pivot table for this model (Tournament)
+        'match_id'            // foreign key on pivot table for related model (MatchModel)
+    );
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'tournament_user');
+        return $this->belongsToMany(User::class, 'tournament_users');
     }
 }

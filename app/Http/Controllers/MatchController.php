@@ -25,7 +25,7 @@ class MatchController extends Controller
      */
     public function create()
     {
-        return view('matches.create');
+        return view('matches.matches_create');
     }
 
     /**
@@ -36,11 +36,13 @@ class MatchController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
-            'tournament_id' => 'required|exists:tournaments,id',
             'home_team'     => 'required|string|max:255',
             'away_team'     => 'required|string|max:255',
             'match_date'    => 'required|date',
+            'home_score'    => 'nullable|integer|min:0',
+            'away_score'    => 'nullable|integer|min:0',
         ]);
 
         MatchModel::create($validated);

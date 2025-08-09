@@ -11,7 +11,7 @@ class MatchModel extends Model
     
     protected $table = 'matches'; // Important, otherwise Laravel will expect 'match_models' table
     protected $fillable = [
-        'tournament_id', 'home_team', 'away_team', 'match_date',
+        'home_team', 'away_team', 'match_date',
         'home_score', 'away_score'
     ];
 

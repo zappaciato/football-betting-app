@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('tournament_id')->constrained()->onDelete('cascade');
             $table->foreignId('match_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['tournament_id', 'match_id']);
         });
     }
 

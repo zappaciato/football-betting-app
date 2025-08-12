@@ -79,7 +79,7 @@ public function store(Request $request)
     {
 
         $tournament = Tournament::findOrFail($id);
-                print_r($tournament);
+
         return view('tournaments.tournament', compact('tournament'));
 
     }
@@ -94,8 +94,9 @@ public function store(Request $request)
     {
         $allMatches = MatchModel::orderBy('match_date', 'asc')->get();
         $allUsers = User::orderBy('name')->get(); 
+        $latestMatchDate = $tournament->matches()->max('match_date');
 
-        return view('tournaments.edit', compact('tournament', 'allMatches', 'allUsers'));
+        return view('tournaments.edit', compact('tournament', 'allMatches', 'allUsers', 'latestMatchDate'));
     }
 
     public function addUser(Request $request, Tournament $tournament)
@@ -116,6 +117,24 @@ public function removeUser(Tournament $tournament, User $user)
     return redirect()->back()->with('success', 'User removed from the tournament.');
 }
 
+public function addMatch(Request $request, Tournament $tournament)
+{
+    $request->validate([
+        'match_id' => 'required|exists:matches,id'
+    ]);
+
+    $tournament->matches()->attach($request->match_id);
+
+    return redirect()->back()->with('success', 'Match added to the tournament.');
+}
+
+public function removeMatch(Tournament $tournament, MatchModel $match)
+{
+    $tournament->matches()->detach($match->id);
+
+    return redirect()->back()->with('success', 'Match removed from the tournament.');
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -124,10 +143,31 @@ public function removeUser(Tournament $tournament, User $user)
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Tournament $tournament)
     {
-        $tournament->update($request->all());
-        return response()->json($tournament);
+    // Validate only fields you want editable
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'start_date' => 'required|date',
+    ]);
+
+    // Update basic fields
+    $tournament->fill($validated);
+
+    // Calculate latest match date for this tournament
+    $latestMatchDate = $tournament->matches()->max('match_date');
+
+    if ($latestMatchDate) {
+        $tournament->end_date = \Carbon\Carbon::parse($latestMatchDate)->format('Y-m-d');
+    } else {
+        $tournament->end_date = $tournament->start_date; // fallback if no matches
+    }
+
+    $tournament->save();
+
+    return redirect()->route('tournaments.edit', $tournament->id)
+                     ->with('success', 'Tournament updated successfully.');
     }
 
     /**

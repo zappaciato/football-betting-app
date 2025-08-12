@@ -37,7 +37,24 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee');
 Route::resource('matches', MatchController::class);
+Route::get('matches/{match}/edit-score', [MatchController::class, 'editScore'])->name('matches.editScore');
+Route::put('matches/{match}/update-score', [MatchController::class, 'updateScore'])->name('matches.updateScore');
+
+
+
 Route::resource('tournaments', TournamentController::class);
+Route::delete('tournaments/{tournament}/matches/{match}', [TournamentController::class, 'removeMatch'])
+    ->name('tournaments.matches.remove');
+
+Route::post('tournaments/{tournament}/matches', [TournamentController::class, 'addMatch'])
+    ->name('tournaments.matches.add');
+
+Route::delete('tournaments/{tournament}/users/{user}', [TournamentController::class, 'removeUser'])
+    ->name('tournaments.users.remove');
+
+Route::post('tournaments/{tournament}/users', [TournamentController::class, 'addUser'])
+    ->name('tournaments.users.add');
+
 // This automatically gives:
 // /matches → index
 // /matches/create → create form

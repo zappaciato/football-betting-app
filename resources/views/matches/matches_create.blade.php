@@ -18,12 +18,6 @@
         @csrf
 
         <div>
-            <label class="block font-medium">Tournament ID</label>
-            <input type="number" name="tournament_id" value="{{ old('tournament_id') }}"
-                   class="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200" required>
-        </div>
-
-        <div>
             <label class="block font-medium">Home Team</label>
             <input type="text" name="home_team" value="{{ old('team_home') }}"
                    class="w-full border border-gray-300 rounded p-2 focus:ring focus:ring-blue-200" required>

@@ -25,37 +25,43 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [TournamentController::class, 'indexUser'])->name('tournament.index_user');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee');
-Route::resource('matches', MatchController::class);
-Route::get('matches/{match}/edit-score', [MatchController::class, 'editScore'])->name('matches.editScore');
-Route::put('matches/{match}/update-score', [MatchController::class, 'updateScore'])->name('matches.updateScore');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee'); //to jest do wywalenia
+
+    Route::get('matches/user', [MatchController::class, 'indexUser'])->name('matches.indexUser');
+    Route::get('tournaments/user', [TournamentController::class, 'indexUser'])->name('tournaments.indexUser');
+    Route::resource('matches', MatchController::class);
+    Route::resource('tournaments', TournamentController::class);
+
+
+//Admin routes
+    Route::middleware('admin')->group(function () {
+
+        Route::get('matches/{match}/edit-score', [MatchController::class, 'editScore'])->name('matches.editScore');
+        Route::put('matches/{match}/update-score', [MatchController::class, 'updateScore'])->name('matches.updateScore');
 
 
 
-Route::resource('tournaments', TournamentController::class);
-Route::delete('tournaments/{tournament}/matches/{match}', [TournamentController::class, 'removeMatch'])
-    ->name('tournaments.matches.remove');
-
-Route::post('tournaments/{tournament}/matches', [TournamentController::class, 'addMatch'])
-    ->name('tournaments.matches.add');
-
-Route::delete('tournaments/{tournament}/users/{user}', [TournamentController::class, 'removeUser'])
-    ->name('tournaments.users.remove');
-
-Route::post('tournaments/{tournament}/users', [TournamentController::class, 'addUser'])
-    ->name('tournaments.users.add');
-
-// This automatically gives:
-// /matches → index
-// /matches/create → create form
-// /matches (POST) → store data
 
 
+        Route::delete('tournaments/{tournament}/matches/{match}', [TournamentController::class, 'removeMatch'])
+            ->name('tournaments.matches.remove');
+
+        Route::post('tournaments/{tournament}/matches', [TournamentController::class, 'addMatch'])
+            ->name('tournaments.matches.add');
+
+        Route::delete('tournaments/{tournament}/users/{user}', [TournamentController::class, 'removeUser'])
+            ->name('tournaments.users.remove');
+
+        Route::post('tournaments/{tournament}/users', [TournamentController::class, 'addUser'])
+            ->name('tournaments.users.add');
+
+});
 
 
 

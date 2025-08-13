@@ -33,14 +33,42 @@ class TournamentController extends Controller
             });
         });
     }
+    $tournaments = $tournaments->get();
+        return view('tournaments.index', compact('tournaments', 'showAll'));
+}
 
-    // Order tournaments by latest match date
-    $tournaments = $tournaments->withMax('matches', 'match_date')
-                               ->orderBy('matches_max_match_date', 'desc')
-                               ->get();
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+public function indexUser(Request $request)
+{
+    $user = auth()->user(); // get the logged-in user
+    $showAll = $request->query('show') === 'all';
 
-    return view('tournaments.index', compact('tournaments', 'showAll'));
+    // Start query with eager loading matches
+    $tournaments = Tournament::with('matches')
+        ->whereHas('users', function ($query) use ($user) {
+            $query->where('user_id', $user->id); // only tournaments the user is part of
+        });
+
+    if (!$showAll) {
+        // Only active tournaments (with at least one match missing scores)
+        $tournaments->whereHas('matches', function ($query) {
+            $query->where(function ($q) {
+                $q->whereNull('result_home')
+                  ->orWhereNull('result_away')
+                  ->orWhere('result_home', '')
+                  ->orWhere('result_away', '');
+            });
+        });
     }
+
+    $tournaments = $tournaments->get();
+
+    return view('tournaments.indexUser', compact('tournaments', 'showAll'));
+}
 
 public function create()
 {

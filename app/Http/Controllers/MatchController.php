@@ -16,29 +16,54 @@ class MatchController extends Controller
      */
     public function index(Request $request)
     {
-            $showAll = $request->query('show') === 'all';
+    // Only matches missing scores
+    $matches = MatchModel::where(function ($query) {
+        $query->whereNull('result_home')
+              ->orWhereNull('result_away')
+              ->orWhere('result_home', '')
+              ->orWhere('result_away', '');
+    })
+    ->orderBy('match_date', 'asc')
+    ->get();
 
-    if ($showAll) {
-        // Show all matches, no filter
-        $matches = MatchModel::orderBy('match_date', 'desc')->get();
-    } else {
-        // Show matches with past date and no score
-        $matches = MatchModel::whereDate('match_date', '<', Carbon::today())
-            ->where(function ($query) {
-                $query->whereNull('result_home')
-                      ->orWhereNull('result_away')
-                      ->orWhere('result_home', '')
-                      ->orWhere('result_away', '');
-            })
-            ->orderBy('match_date', 'asc')
-            ->get();
-    }
-
-    return view('matches.index', compact('matches', 'showAll'));
+    return view('matches.index', compact('matches'));
 
         // $matches = MatchModel::all();
         // return view('matches.matches_index', compact('matches'));
     }
+
+public function indexUser(Request $request)
+{
+    $user = auth()->user(); // logged-in user
+    $showAll = $request->query('show') === 'all';
+
+    // 1. Get all tournament IDs the user belongs to
+    $tournamentIds = $user->tournaments()->pluck('tournaments.id');
+
+    // 2. Get all match IDs from tournament_matches for these tournaments
+    $matchIds = \DB::table('tournament_matches')
+        ->whereIn('tournament_id', $tournamentIds)
+        ->pluck('match_id');
+
+    // 3. Get matches with optional filtering
+    $matchesQuery = MatchModel::whereIn('id', $matchIds)->with('tournament');
+
+    if (!$showAll) {
+        $matchesQuery->where(function ($query) {
+            $query->whereNull('result_home')
+                  ->orWhereNull('result_away')
+                  ->orWhere('result_home', '')
+                  ->orWhere('result_away', '');
+        });
+    }
+
+    // 4. Order by date
+    $matches = $matchesQuery->orderBy('match_date', 'asc')
+        ->get();
+
+    return view('matches.indexUser', compact('matches', 'showAll'));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -47,7 +72,7 @@ class MatchController extends Controller
      */
     public function create()
     {
-        return view('matches.matches_create');
+        return view('matches.create');
     }
 
     /**

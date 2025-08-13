@@ -20,7 +20,7 @@ class MatchController extends Controller
 
     if ($showAll) {
         // Show all matches, no filter
-        $matches = MatchModel::orderBy('match_date', 'desc')->paginate(20);
+        $matches = MatchModel::orderBy('match_date', 'desc')->get();
     } else {
         // Show matches with past date and no score
         $matches = MatchModel::whereDate('match_date', '<', Carbon::today())
@@ -31,7 +31,7 @@ class MatchController extends Controller
                       ->orWhere('result_away', '');
             })
             ->orderBy('match_date', 'asc')
-            ->paginate(20);
+            ->get();
     }
 
     return view('matches.index', compact('matches', 'showAll'));

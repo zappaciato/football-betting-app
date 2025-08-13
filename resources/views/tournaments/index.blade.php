@@ -5,7 +5,7 @@
 
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-extrabold text-gray-900">Tournaments</h1>
-
+        <a href="{{ route('tournaments.create') }}">Create a new tournament!</a>
         <a href="{{ url()->current() }}?show={{ $showAll ? 'active' : 'all' }}"
            class="px-4 py-2 rounded-md text-sm font-semibold
                   {{ $showAll ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">

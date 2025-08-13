@@ -18,23 +18,26 @@ class TournamentController extends Controller
      */
     public function index(Request $request)
     {
- $showAll = $request->query('show') === 'all';
+         $showAll = $request->query('show') === 'all';
 
-    if ($showAll) {
-        // Show all tournaments, no filter
-        $tournaments = Tournament::orderBy('created_at', 'desc');
+    $tournaments = Tournament::with('matches');
 
-    } else {
-        // Show tournaments having at least one match with missing score (active tournaments)
-        $tournaments = Tournament::whereHas('matches', function ($query) {
-            $query->whereNull('result_home')
+    if (!$showAll) {
+        // Only tournaments with matches missing scores
+        $tournaments->whereHas('matches', function ($query) {
+            $query->where(function ($q) {
+                $q->whereNull('result_home')
                   ->orWhereNull('result_away')
                   ->orWhere('result_home', '')
                   ->orWhere('result_away', '');
-        })->orderBy('created_at', 'desc');
-
+            });
+        });
     }
-    $tournaments = $tournaments->get();
+
+    // Order tournaments by latest match date
+    $tournaments = $tournaments->withMax('matches', 'match_date')
+                               ->orderBy('matches_max_match_date', 'desc')
+                               ->get();
 
     return view('tournaments.index', compact('tournaments', 'showAll'));
     }
@@ -43,7 +46,7 @@ public function create()
 {
     $users = User::all();
     $matches = \App\Models\MatchModel::all();
-    return view('tournaments.tournaments_create', compact('users','matches'));
+    return view('tournaments.create', compact('users','matches'));
 }
 
 public function store(Request $request)

@@ -58,9 +58,7 @@
             </tbody>
         </table>
 
-        <div class="mt-6">
-            {{ $matches->links() }}
-        </div>
+
     @else
         <p>No matches found.</p>
     @endif

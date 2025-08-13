@@ -28,11 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
-
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee');
@@ -59,3 +54,15 @@ Route::post('tournaments/{tournament}/users', [TournamentController::class, 'add
 // /matches → index
 // /matches/create → create form
 // /matches (POST) → store data
+
+
+
+
+
+});
+
+require __DIR__.'/auth.php';
+
+Auth::routes();
+
+

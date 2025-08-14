@@ -5,12 +5,20 @@
 
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-extrabold text-gray-900">Tournaments</h1>
+        @if(auth()->user()->id === 1)
         <a href="{{ route('tournaments.create') }}">Create a new tournament!</a>
-        <a href="{{ url()->current() }}?show={{ $showAll ? 'active' : 'all' }}"
+        <a href="{{ route('tournaments.index') }}"
            class="px-4 py-2 rounded-md text-sm font-semibold
-                  {{ $showAll ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
-            {{ $showAll ? 'Show Active Only' : 'Show All' }}
+                  {{ 'bg-indigo-600 text-back hover:bg-indigo-700'}}">Show All
+
         </a>
+        @else
+        <a href="{{ route('tournaments.indexUser') }}"
+           class="px-4 py-2 rounded-md text-sm font-semibold
+                  {{'bg-indigo-600 text-black hover:bg-indigo-700'}}">
+<!-- Tutaj powinien byc widok indexUser -->
+        </a>
+        @endif
     </div>
 
     @if($tournaments->isEmpty())

@@ -18,11 +18,9 @@ class TournamentController extends Controller
      */
     public function index(Request $request)
     {
-         $showAll = $request->query('show') === 'all';
-
     $tournaments = Tournament::with('matches');
 
-    if (!$showAll) {
+  
         // Only tournaments with matches missing scores
         $tournaments->whereHas('matches', function ($query) {
             $query->where(function ($q) {
@@ -32,9 +30,9 @@ class TournamentController extends Controller
                   ->orWhere('result_away', '');
             });
         });
-    }
+
     $tournaments = $tournaments->get();
-        return view('tournaments.index', compact('tournaments', 'showAll'));
+        return view('tournaments.index', compact('tournaments'));
 }
 
         /**

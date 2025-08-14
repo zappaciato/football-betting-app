@@ -25,30 +25,27 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [TournamentController::class, 'indexUser'])->name('tournament.index_user');
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+    Route::get('/dashboard', [TournamentController::class, 'indexUser'])->name('tournament.indexUser');
     Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee'); //to jest do wywalenia
+    Route::get('tournaments/user', [TournamentController::class, 'indexUser'])->name('tournaments.indexUser');
+
 
     Route::get('matches/user', [MatchController::class, 'indexUser'])->name('matches.indexUser');
-    Route::get('tournaments/user', [TournamentController::class, 'indexUser'])->name('tournaments.indexUser');
     Route::resource('matches', MatchController::class);
-    Route::resource('tournaments', TournamentController::class);
-
 
 //Admin routes
     Route::middleware('admin')->group(function () {
 
         Route::get('matches/{match}/edit-score', [MatchController::class, 'editScore'])->name('matches.editScore');
         Route::put('matches/{match}/update-score', [MatchController::class, 'updateScore'])->name('matches.updateScore');
-
-
-
-
-
+        Route::resource('tournaments', TournamentController::class);
         Route::delete('tournaments/{tournament}/matches/{match}', [TournamentController::class, 'removeMatch'])
             ->name('tournaments.matches.remove');
 

@@ -46,7 +46,7 @@
 <ul class="navbar-nav me-auto">
 
     @auth
-        @if(auth()->user()->is_admin) <!-- Better: add an is_admin column or method -->
+        @if(auth()->user()->is_admin) 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('matches.index') }}">Matches</a>
             </li>

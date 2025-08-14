@@ -1,63 +1,68 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="tournaments-container">
 
-    <div class="flex justify-between items-center mb-8">
+    {{-- Header --}}
+    <div class="tournaments-header">
+    <div>
         <h1 class="text-3xl font-extrabold text-gray-900">Tournaments</h1>
-        <a href="{{ route('tournaments.create') }}">Create a new tournament!</a>
-        <a href="{{ route('tournaments.indexUser') }}"
-           class="px-4 py-2 rounded-md text-sm font-semibold
-                  {{'bg-black-600 text-black hover:bg-indigo-700'}}"> Show Your Tournaments
-        </a>
+                @if(auth()->user()->id === 1) <!-- Admin -->
+            <x-responsive-nav-link class="k001-button-add" :href="route('tournaments.create')">
+                {{ __('Create a Tournament') }}
+            </x-responsive-nav-link>
+
+        @else
+        <!-- What a user will see in the matches list - NOT ADMIN .. indexUser and Idex reapat a lot of coude FIX it-->
+        @endif
     </div>
+        </div>
 
+    {{-- Empty State --}}
     @if($tournaments->isEmpty())
-        <p class="text-center text-gray-600 mt-16">No tournaments to display.</p>
+        <p class="tournaments-empty">No tournaments to display.</p>
     @else
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {{-- Tournament Grid --}}
+        <div class="tournaments-grid">
             @foreach($tournaments as $tournament)
-                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-semibold text-indigo-900">{{ $tournament->name }}</h2>
-                        <span class="text-xs px-2 py-1 rounded-full
-                            {{ $tournament->matches()->whereNull('result_home')
-                                ->orWhereNull('result_away')
-                                ->orWhere('result_home', '')
-                                ->orWhere('result_away', '')
-                                ->exists() ? 'bg-green-100 text-green-800' : 'bg-gray-300 text-gray-600' }}">
-                            {{ $tournament->matches()->whereNull('result_home')
-                                ->orWhereNull('result_away')
-                                ->orWhere('result_home', '')
-                                ->orWhere('result_away', '')
-                                ->exists() ? 'Active' : 'Completed' }}
-                        </span>
-                    </div>
+                @php
+                    $isActive = $tournament->matches()
+                        ->whereNull('result_home')
+                        ->orWhereNull('result_away')
+                        ->orWhere('result_home', '')
+                        ->orWhere('result_away', '')
+                        ->exists();
+                @endphp
+                <div class="tournament-card">
+                    <img src="https://source.unsplash.com/400x200/?tournament,sports" alt="{{ $tournament->name }}">
+                    <div class="tournament-card-body">
+                        <div class="tournament-card-header">
+                            <h2 class="tournament-card-title">{{ $tournament->name }}</h2>
+                            <span class="tournament-status {{ $isActive ? 'tournament-status-active' : 'tournament-status-completed' }}">
+                                {{ $isActive ? 'Active' : 'Completed' }}
+                            </span>
+                        </div>
 
-                    <p class="mt-2 text-gray-700">
-                        Created: {{ $tournament->created_at->format('M d, Y') }}<br>
-                        @if($tournament->start_date)
-                        Start: {{ \Carbon\Carbon::parse($tournament->start_date)->format('M d, Y') }}<br>
-                        @endif
-                        @if($tournament->end_date)
-                        End: {{ \Carbon\Carbon::parse($tournament->end_date)->format('M d, Y') }}
-                        @endif
-                    </p>
+                        <div class="tournament-dates">
+                            <p><span>Created:</span> {{ $tournament->created_at->format('M d, Y') }}</p>
+                            @if($tournament->start_date)
+                                <p><span>Start:</span> {{ \Carbon\Carbon::parse($tournament->start_date)->format('M d, Y') }}</p>
+                            @endif
+                            @if($tournament->end_date)
+                                <p><span>End:</span> {{ \Carbon\Carbon::parse($tournament->end_date)->format('M d, Y') }}</p>
+                            @endif
+                        </div>
 
-                    <div class="mt-4 flex space-x-3">
-                        <a href="{{ route('tournaments.show', $tournament->id) }}"
-                           class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-indigo-700">
-                            View
-                        </a>
-
-                        <a href="{{ route('tournaments.edit', $tournament->id) }}"
-                           class="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm font-semibold hover:bg-gray-300">
-                            Edit
-                        </a>
+                        <div class="tournament-actions">
+                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="view">View</a>
+                            <a href="{{ route('tournaments.edit', $tournament->id) }}" class="edit">Edit</a>
+                        </div>
                     </div>
                 </div>
+
             @endforeach
         </div>
     @endif
+
 </div>
 @endsection

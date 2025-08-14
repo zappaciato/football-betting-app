@@ -6,17 +6,12 @@
         <h1 class="text-3xl font-bold">Matches</h1>
         
         @if(auth()->user()->id === 1) <!-- Admin -->
-        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-            <x-responsive-nav-link :href="route('matches.create')">
-                    {{ __('Add a MATCH') }}
-                </x-responsive-nav-link>
-        </button>
-            <a href="{{ route('matches.index', ['show' => 'all']) }}" 
-               class="bg-blue-600 text-balck px-4 py-2 rounded hover:bg-indigo-700">
-               Show All Matches (Archive)
-            </a>
+<x-responsive-nav-link class="k001-button-add" :href="route('matches.create')">
+    {{ __('Add a MATCH') }}
+</x-responsive-nav-link>
+
         @else
-        <!-- What a user will see in the matches list - NOT ADMIN -->
+        <!-- What a user will see in the matches list - NOT ADMIN .. indexUser and Idex reapat a lot of coude FIX it-->
         @endif
     </div>
 

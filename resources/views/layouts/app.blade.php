@@ -146,6 +146,138 @@
       margin-bottom: .5rem;
     }
   }
+
+  /* custom styles Kris */
+  .k001-button-add {
+    display: inline-block;                 /* makes margin work nicely */
+    padding: 0.6rem 1.2rem;                /* taller + wider hit area */
+    margin-right: 0.5rem;                  /* space to the right of other buttons */
+    margin-bottom: 0.5rem;                 /* space for mobile stacked view */
+    border-radius: 0.5rem;                 /* subtle pill shape */
+    background: linear-gradient(135deg, #f38d07ff, #eea811ff); /* Indigo → Cyan */
+    color: #000000ff;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.12s ease,
+        box-shadow 0.2s ease;
+}
+
+.k001-button-add:hover,
+.k001-button-add:focus-visible {
+    background: linear-gradient(135deg, #2a1ccaff, #0b93e2ff); /* darker Indigo → Cyan */
+    box-shadow: 0 6px 14px rgba(79,70,229,0.25),
+                0 2px 6px rgba(6,182,212,0.18);
+    color: #eff30ef6;
+    transform: translateY(-1px);  /* subtle lift effect */
+}
+
+/* Optional: make it responsive on mobile */
+@media (max-width: 768px) {
+    .k001-button-add {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+/* cards torunament */
+/* resources/css/tournaments.css */
+
+/* Container */
+.tournaments-container {
+    max-width: 7xl;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Header */
+.tournaments-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: right;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+@media(min-width: 768px) {
+    .tournaments-header {
+        flex-direction: row;
+    }
+}
+
+/* Buttons */
+.tournaments-btn {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    margin-right: 1rem;
+}
+.tournaments-btn-green { background-color: #16a34a; color: white; }
+.tournaments-btn-green:hover { background-color: #15803d; }
+.tournaments-btn-indigo { background-color: #4f46e5; color: white; }
+.tournaments-btn-indigo:hover { background-color: #4338ca; }
+.tournaments-btn-gray { background-color: #f3f4f6; color: #374151; }
+.tournaments-btn-gray:hover { background-color: #e5e7eb; }
+
+/* Empty state */
+.tournaments-empty { 
+    text-align: center; 
+    margin-top: 4rem; 
+    font-size: 1.125rem; 
+    color: #6b7280;
+}
+
+/* Grid */
+.tournaments-grid { 
+    display: grid; 
+    gap: 1.5rem;
+}
+@media(min-width: 640px) { .tournaments-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width: 1024px) { .tournaments-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Card */
+.tournament-card {
+    background-color: white;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+.tournament-card:hover { 
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+    transform: translateY(-0.25rem);
+}
+.tournament-card img { width: 100%; height: 10rem; object-fit: cover; }
+.tournament-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+
+/* Card Title & Status */
+.tournament-card-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
+.tournament-card-title { font-size: 1.25rem; font-weight: 700; color: #1f2937; }
+.tournament-status { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 9999px; }
+.tournament-status-active { background-color: #d1fae5; color: #065f46; }
+.tournament-status-completed { background-color: #e5e7eb; color: #6b7280; }
+
+/* Dates */
+.tournament-dates { font-size: 0.875rem; color: #374151; margin-bottom: 1.5rem; }
+.tournament-dates p { margin-bottom: 0.25rem; }
+.tournament-dates span { font-weight: 500; }
+
+/* Action buttons inside card */
+.tournament-actions { margin-top: auto; display: flex; gap: 0.75rem; }
+.tournament-actions a { flex: 1; text-align: center; padding: 0.5rem 0; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 600; transition: all 0.3s ease; }
+.tournament-actions a.view { background-color: #4f46e5; color: white; }
+.tournament-actions a.view:hover { background-color: #4338ca; }
+.tournament-actions a.edit { background-color: #f3f4f6; color: #374151; }
+.tournament-actions a.edit:hover { background-color: #e5e7eb; }
+
 </style>
 
 </head>
@@ -181,16 +313,16 @@
     @auth
         @if(auth()->user()->id === 1) 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('matches.index') }}">Your Matches</a>
+                <a class="nav-link" href="{{ route('matches.indexUser') }}">Your Matches</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('tournaments.index') }}">Your Tournaments</a>
+                <a class="nav-link" href="{{ route('tournaments.indexUser') }}">Your Tournaments</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('tournaments.index') }}">Matches due</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('tournaments.index') }}">All Matches (archive)</a>
+                <a class="nav-link" href="{{ route('matches.index')}}">All Matches (archive)</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('tournaments.index') }}">All Tournaments (archive)</a>

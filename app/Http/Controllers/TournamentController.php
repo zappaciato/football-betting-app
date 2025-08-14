@@ -19,18 +19,6 @@ class TournamentController extends Controller
     public function index(Request $request)
     {
     $tournaments = Tournament::with('matches');
-
-  
-        // Only tournaments with matches missing scores
-        $tournaments->whereHas('matches', function ($query) {
-            $query->where(function ($q) {
-                $q->whereNull('result_home')
-                  ->orWhereNull('result_away')
-                  ->orWhere('result_home', '')
-                  ->orWhere('result_away', '');
-            });
-        });
-
     $tournaments = $tournaments->get();
         return view('tournaments.index', compact('tournaments'));
 }
@@ -43,29 +31,26 @@ class TournamentController extends Controller
 public function indexUser(Request $request)
 {
     $user = auth()->user(); // get the logged-in user
-    $showAll = $request->query('show') === 'all';
-
     // Start query with eager loading matches
     $tournaments = Tournament::with('matches')
         ->whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id); // only tournaments the user is part of
         });
 
-    if (!$showAll) {
+
         // Only active tournaments (with at least one match missing scores)
-        $tournaments->whereHas('matches', function ($query) {
-            $query->where(function ($q) {
-                $q->whereNull('result_home')
-                  ->orWhereNull('result_away')
-                  ->orWhere('result_home', '')
-                  ->orWhere('result_away', '');
-            });
-        });
-    }
+        // $tournaments->whereHas('matches', function ($query) {
+        //     $query->where(function ($q) {
+        //         $q->whereNull('result_home')
+        //           ->orWhereNull('result_away')
+        //           ->orWhere('result_home', '')
+        //           ->orWhere('result_away', '');
+        //     });
+        // });
 
     $tournaments = $tournaments->get();
 
-    return view('tournaments.indexUser', compact('tournaments', 'showAll'));
+    return view('tournaments.indexUser', compact('tournaments'));
 }
 
 public function create()

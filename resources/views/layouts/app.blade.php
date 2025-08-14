@@ -15,6 +15,139 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+<style>
+  /* Add spacing between menu items */
+  .navbar .navbar-nav .nav-item {
+    margin-right: 0.75rem; /* space between buttons */
+  }
+
+  /* Optional: bigger gap on last item for balance */
+  .navbar .navbar-nav .nav-item:last-child {
+    margin-right: 0;
+  }
+
+  /* Base style for links */
+  .navbar .navbar-nav .nav-link {
+    position: relative;
+    display: inline-block;
+    padding: 0.55rem 1.05rem;
+    border-radius: 0.5rem;
+    color: #374151 !important;
+    background: transparent !important;
+    transition:
+      color .2s ease,
+      background-color .2s ease,
+      box-shadow .2s ease,
+      transform .12s ease;
+  }
+
+  /* Hover base effect */
+  .navbar .navbar-nav .nav-link:hover,
+  .navbar .navbar-nav .nav-link:focus-visible {
+    color: #fff !important;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4) !important;
+    box-shadow: 0 6px 14px rgba(79,70,229,0.25),
+                0 2px 6px rgba(6,182,212,0.18);
+    text-decoration: none !important;
+  }
+
+  /* Active */
+  .navbar .navbar-nav .nav-link.active,
+  .navbar .navbar-nav .nav-link[aria-current="page"] {
+    color: #fff !important;
+    background: linear-gradient(135deg, #ef4444, #f59e0b) !important;
+    box-shadow: 0 6px 14px rgba(239,68,68,0.22),
+                0 2px 6px rgba(245,158,11,0.18);
+  }
+
+  /* Click feedback */
+  .navbar .navbar-nav .nav-link:active {
+    transform: translateY(1px);
+  }
+
+  /* Individual colors */
+  /* first menu item */
+.navbar .navbar-nav li:nth-child(2) .nav-link {
+    background: linear-gradient(135deg, #14b8a6, #059669);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem; /* rounded corners */
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect */
+.navbar .navbar-nav li:nth-child(2) .nav-link:hover {
+    background: linear-gradient(135deg, #0d9488, #047857);
+    transform: translateY(-2px); /* subtle lift */
+}
+/* second menu item */
+.navbar .navbar-nav li:nth-child(2) .nav-link {
+    background: linear-gradient(135deg, #14b8a6, #059669);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem; /* rounded corners */
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect */
+.navbar .navbar-nav li:nth-child(2) .nav-link:hover {
+    background: linear-gradient(135deg, #0d9488, #047857);
+    transform: translateY(-2px); /* subtle lift */
+}
+
+  .navbar .navbar-nav li:nth-child(3) .nav-link {
+    background: linear-gradient(135deg, #f97316, #f59e0b) !important;
+    color: #fff !important;
+  }
+  .navbar .navbar-nav li:nth-child(3) .nav-link:hover {
+    background: linear-gradient(135deg, #ea580c, #d97706) !important;
+  }
+
+  .navbar .navbar-nav li:nth-child(4) .nav-link {
+    background: linear-gradient(135deg, #ec4899, #f43f5e) !important;
+    color: #fff !important;
+  }
+  .navbar .navbar-nav li:nth-child(4) .nav-link:hover {
+    background: linear-gradient(135deg, #db2777, #e11d48) !important;
+  }
+
+  .navbar .navbar-nav li:nth-child(5) .nav-link {
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6) !important;
+    color: #fff !important;
+  }
+  .navbar .navbar-nav li:nth-child(5) .nav-link:hover {
+    background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  }
+
+  /* Underline animation */
+  .navbar .navbar-nav .nav-link::after {
+    content: "";
+    position: absolute;
+    left: .7rem; right: .7rem; bottom: .35rem;
+    height: 2px;
+    background: currentColor;
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .navbar .navbar-nav .nav-link:hover::after,
+  .navbar .navbar-nav .nav-link:focus-visible::after {
+    opacity: .7;
+    transform: scaleX(1);
+  }
+
+  /* Mobile: stacked spacing */
+  @media (max-width: 768px) {
+    .navbar .navbar-nav .nav-item {
+      margin-bottom: .5rem;
+    }
+  }
+</style>
+
 </head>
 <body>
     <div id="app">
@@ -46,19 +179,29 @@
 <ul class="navbar-nav me-auto">
 
     @auth
-        @if(auth()->user()->is_admin) 
+        @if(auth()->user()->id === 1) 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('matches.index') }}">Matches</a>
+                <a class="nav-link" href="{{ route('matches.index') }}">Your Matches</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('tournaments.index') }}">Tournaments</a>
+                <a class="nav-link" href="{{ route('tournaments.index') }}">Your Tournaments</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('tournaments.index') }}">Matches due</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('tournaments.index') }}">All Matches (archive)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('tournaments.index') }}">All Tournaments (archive)</a>
+            </li>
+          </div>
         @else
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('matches.indexUser') }}">Matches</a>
+                <a class="nav-link" href="{{ route('matches.indexUser') }}">Your Matches</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('tournaments.indexUser') }}">Tournaments</a>
+                <a class="nav-link" href="{{ route('tournaments.indexUser') }}">Your Tournaments</a>
             </li>
         @endif
     @endauth
@@ -101,7 +244,6 @@
                                      document.getElementById('logout-form').submit();">
                         {{ __('Logout') }}
                     </a>
-
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>

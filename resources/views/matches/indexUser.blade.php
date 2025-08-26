@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+
+  {{-- Flash  redirectów) --}}
+  @if (session('warning'))
+    <div class="alert alert-warning">{{ session('warning') }}</div>
+  @endif
+
 <div class="max-w-4xl mx-auto py-8 px-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Matches</h1>
@@ -11,7 +17,24 @@
 </x-responsive-nav-link>
 
         @else
-        <!-- What a user will see in the matches list - NOT ADMIN -->
+        @if ($matches->isEmpty())
+    <div class="card p-4 text-center">
+      <h3 class="mb-2">{{ $emptyTitle ?? 'Brak danych' }}</h3>
+      <p class="text-muted mb-3">{{ $emptyText ?? 'Nie znaleziono żadnych meczów.' }}</p>
+      @isset($emptyCtaUrl)
+        <a href="{{ $emptyCtaUrl }}" class="btn btn-primary">{{ $emptyCtaTxt ?? 'OK' }}</a>
+      @endisset
+    </div>
+  @else
+    <ul class="list-group">
+      @foreach ($matches as $m)
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ $m->name ?? 'Mecz #'.$m->id }}</span>
+          <span class="text-muted">{{ \Illuminate\Support\Str::of($m->match_date)->toString() }}</span>
+        </li>
+      @endforeach
+    </ul>
+  @endif
         @endif
     </div>
 
@@ -51,11 +74,11 @@
                         @if(auth()->user()->id === 1) <!-- Admin -->
                             <a href="{{ route('matches.editScore', $match->id) }}" class="text-indigo-600 hover:underline">Update Score</a>
                         @else <!-- Regular user -->
-                        <a href="{{ route('predictions.create', ['tournament' => $match->tournament_id, 'match' => $match->id]) }}" class="text-green-600 hover:underline">Predict Score</a>
-                        @endif         
-                    </td>
-                </tr>
-                @endforeach
+                          <a href="{{ route('predictions.create', ['tournament' => optional($match->tournaments->first())->id, 'match' => $match->id]) }}" class="text-green-600 hover:underline">Predict Score</a>
+                          @endif
+                      </td>
+                  </tr>
+                  @endforeach
             </tbody>
         </table>
 

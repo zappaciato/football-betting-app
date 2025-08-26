@@ -10,8 +10,16 @@ use Illuminate\Support\Str;
 use App\Models\Prediction;
 use Illuminate\Support\Facades\DB;
 
+
 class TournamentController extends Controller
 {
+    // żeby $user nie był null
+    public function __construct()
+    {
+    $this->middleware('auth');
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -37,17 +45,6 @@ public function indexUser(Request $request)
         ->whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id); // only tournaments the user is part of
         });
-
-
-        // Only active tournaments (with at least one match missing scores)
-        // $tournaments->whereHas('matches', function ($query) {
-        //     $query->where(function ($q) {
-        //         $q->whereNull('result_home')
-        //           ->orWhereNull('result_away')
-        //           ->orWhere('result_home', '')
-        //           ->orWhere('result_away', '');
-        //     });
-        // });
 
     $tournaments = $tournaments->get();
 

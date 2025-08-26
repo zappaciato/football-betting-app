@@ -51,10 +51,11 @@
                         @if(auth()->user()->id === 1) <!-- Admin -->
                             <a href="{{ route('matches.editScore', $match->id) }}" class="text-indigo-600 hover:underline">Update Score</a>
                         @else <!-- Regular user -->
-                            <a href="{{ route('predictions.create', ['tournament' => $match->tournament_id, 'match' => $match->id]) }}" class="text-green-600 hover:underline">Predict Score</a>
-                        @endif         
-                    </td>
-                </tr>
+                              <a href="{{ route('predictions.create', ['tournament' => optional($match->tournaments->first())->id, 'match' => $match->id]) }}" class="text-green-600 hover:underline">Predict Score</a>
+                          @endif
+                      </td>
+                  </tr>
+
                 @endforeach
             </tbody>
         </table>

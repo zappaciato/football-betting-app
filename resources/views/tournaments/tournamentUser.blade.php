@@ -8,8 +8,21 @@
     @endif
     <ul class="space-y-2">
         @foreach($tournament->matches as $match)
-            <li>{{ $match->home_team }} vs {{ $match->away_team }} ({{ \Carbon\Carbon::parse($match->match_date)->format('M d, Y') }})</li>
-        @endforeach
-    </ul>
+            @php
+        // ponieważ dociągnęliśmy TYLKO predykcje tego usera, bierzemy pierwszą (albo null)
+        $pred = $match->predictions->first();
+            @endphp
+<li>
+        {{ $match->home_team }} vs {{ $match->away_team }}
+        ({{ \Carbon\Carbon::parse($match->match_date)->format('M d, Y') }})
+
+        @if($pred)
+            — Your prediction: {{ $pred->predicted_home }} : {{ $pred->predicted_away }}
+        @else
+            — <em>No prediction yet</em>
+        @endif
+    </li>
+@endforeach
+</ul>
 </div>
 @endsection

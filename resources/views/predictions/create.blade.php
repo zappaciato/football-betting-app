@@ -16,7 +16,7 @@
 
     <form action="{{ route('predictions.store', ['tournament' => $tournament->id, 'match' => $match->id]) }}" method="POST" class="space-y-4">
         @csrf
-
+        <input type="hidden" name="match_ids" value='@json($matchIds)'>
         <div>
             <label class="block font-medium">{{ $match->home_team }}</label>
             <input type="number" name="predicted_home" value="{{ old('predicted_home') }}" class="w-full border border-gray-300 rounded p-2" required>

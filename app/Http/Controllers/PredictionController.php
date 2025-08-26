@@ -24,9 +24,35 @@ class PredictionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Tournament $tournament, MatchModel $match)
+    public function create(Tournament $tournament, MatchModel $match, Request $request)
     {
-        return view('predictions.create', compact('tournament', 'match'));
+        //  abort_unless($match->tournament_id === $tournament->id, 404);
+
+        $matchIds = $request->query('match_ids', []);
+
+        if (!is_array($matchIds)) {
+            $matchIds = json_decode($matchIds, true) ?: [];
+        }
+
+        $matchIds = array_map('intval', $matchIds);
+        $matchIds = array_values(array_diff($matchIds, [$match->id]));
+
+        $userId = $request->user()->id;
+        $matchIds = MatchModel::whereIn('id', $matchIds)
+            ->whereHas('tournaments', function ($q) use ($tournament) {
+            $q->where('tournament_id', $tournament->id);
+        })
+            ->whereDoesntHave('predictions', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->pluck('id')
+            ->toArray();
+
+        return view('predictions.create', [
+            'tournament' => $tournament,
+            'match' => $match,
+            'matchIds' => $matchIds,
+        ]);
     }
 
     /**
@@ -37,16 +63,36 @@ class PredictionController extends Controller
      */
     public function store(Request $request, Tournament $tournament, MatchModel $match)
     {
-                $validated = $request->validate([
+        // abort_unless($match->tournament_id === $tournament->id, 404);
+
+        $matchIds = $request->input('match_ids', []);
+        if (!is_array($matchIds)) {
+            $matchIds = json_decode($matchIds, true) ?: [];
+        }
+
+        $matchIds = array_map('intval', $matchIds);
+
+        $userId = $request->user()->id;
+        $matchIds = MatchModel::whereIn('id', $matchIds)
+            ->whereHas('tournaments', function ($q) use ($tournament) {
+            $q->where('tournament_id', $tournament->id);
+        })
+            ->whereDoesntHave('predictions', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->pluck('id')
+            ->toArray();
+
+        $validated = $request->validate([
             'predicted_home' => ['required', 'integer', 'min:0'],
             'predicted_away' => ['required', 'integer', 'min:0'],
         ]);
 
-        Prediction::updateOrCreate(
+        $prediction = Prediction::updateOrCreate(
             [
                 'tournament_id' => $tournament->id,
                 'match_id' => $match->id,
-                'user_id' => $request->user()->id,
+                'user_id' => $userId,
             ],
             [
                 'predicted_home' => $validated['predicted_home'],
@@ -54,7 +100,20 @@ class PredictionController extends Controller
             ]
         );
 
-        return redirect()->back()->with('status', 'Prediction saved.');
+
+
+        $nextMatchId = array_shift($matchIds);
+
+        if ($nextMatchId) {
+            return redirect()->route('predictions.create', [
+                'tournament' => $tournament->id,
+                'match' => $nextMatchId,
+                'match_ids' => $matchIds,
+            ])->with('status', 'Prediction saved.');
+        }
+
+        // return redirect()->route('tournaments.tournamentUser', $tournament)->with('status', 'Prediction saved.');
+            return view('tournaments.tournamentUser', compact('tournament', 'prediction'));
     }
 
     /**

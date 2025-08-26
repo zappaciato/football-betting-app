@@ -15,9 +15,12 @@ class MatchModel extends Model
         'home_score', 'away_score'
     ];
 
-    public function tournament()
+    public function tournaments()
     {
-        return $this->belongsTo(Tournament::class);
+        return $this->belongsToMany(Tournament::class,
+            'tournament_matches',
+            'match_id',
+            'tournament_id');
     }
 
     public function predictions()

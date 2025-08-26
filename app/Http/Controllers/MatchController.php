@@ -28,35 +28,42 @@ class MatchController extends Controller
 
 public function indexUser(Request $request)
 {
-        $user = auth()->user(); // logged-in user
+        $userId = $request->user()->id;
 
-    // 1. Get all tournament IDs the user belongs to (from tournaments_users pivot table)
+    // 1) Turnieje użytkownika
     $tournamentIds = \DB::table('tournament_users')
-        ->where('user_id', $user->id)
+        ->where('user_id', $userId)
         ->pluck('tournament_id');
 
     if ($tournamentIds->isEmpty()) {
-    // User is not part of any tournament
-        return redirect()->route('matches.indexUser')
-                     ->with('warning', 'You are not part of any tournament yet.');
+        // Brak turniejów -> pokaż pusty stan w tym samym widoku
+        return view('matches.indexUser', [
+            'matches'     => collect(),
+            'emptyTitle'  => 'Brak turniejów',
+            'emptyText'   => 'Nie jesteś przypisany do żadnego turnieju.',
+            // opcjonalnie np. link dokądś:
+            'emptyCtaUrl' => route('tournaments.indexUser'),
+            'emptyCtaTxt' => 'Zobacz swoje turnieje',
+        ]);
     }
 
-    // 2. Get all match IDs for these tournaments (from tournament_matches pivot table)
+    // 2) Mecze dla tych turniejów
     $matchIds = \DB::table('tournament_matches')
         ->whereIn('tournament_id', $tournamentIds)
-        ->pluck('match_id')
-        ->unique(); // remove duplicates if the same match is in multiple tournaments
+        ->distinct()
+        ->pluck('match_id');
 
     if ($matchIds->isEmpty()) {
-        // No matches for these tournaments
-    // User is not part of any tournament
-    return redirect()->route('matches.indexUser')
-                     ->with('warning', 'You are not part of any tournament yet.');
+        return view('matches.indexUser', [
+            'matches'     => collect(),
+            'emptyTitle'  => 'Brak meczów',
+            'emptyText'   => 'Twoje turnieje nie mają jeszcze żadnych meczów.',
+        ]);
     }
 
-    // 3. Get matches with optional filtering (matches without results)
+    // 3) Normalny listing
     $matches = MatchModel::whereIn('id', $matchIds)
-        ->with('tournament')
+        ->with('tournaments')
         ->orderBy('match_date', 'asc')
         ->get();
 

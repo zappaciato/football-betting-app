@@ -19,12 +19,17 @@ return new class extends Migration
             $table->foreignId('match_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
-            $table->smallInteger('predicted_home')->nullable()->comment('Typ: gole gospodarzy');
-            $table->smallInteger('predicted_away')->nullable()->comment('Typ: gole gości');
+            $table->unsignedSmallInteger('predicted_home')->nullable()->comment('Typ: Home_goals');
+            $table->unsignedSmallInteger('predicted_away')->nullable()->comment('Typ: Away_goals');
 
-            // ile punktów przyznano po rozliczeniu meczu
+            // ile punktów przyznano po rozliczeniu meczu (dla ulatwienia przeliczania wyników)
             $table->integer('points_awarded')->default(0);
-            $table->unique(['tournament_id', 'user_id']);
+            // Klucz unikalny: jeden rekord na (turniej, mecz, user)
+            $table->unique(['tournament_id', 'match_id', 'user_id'], 'predictions_unique_triplet');
+
+            // pomocnicze indeksy pod typowe zapytania
+            $table->index(['tournament_id', 'user_id']);
+            $table->index(['match_id', 'user_id']);
 
             $table->timestamps();
         });

@@ -7,6 +7,7 @@ use App\Models\Tournament;
 use App\Models\User;
 use App\Models\MatchModel;
 use Illuminate\Support\Str;
+use App\Models\Prediction;
 use Illuminate\Support\Facades\DB;
 
 class TournamentController extends Controller
@@ -52,6 +53,38 @@ public function indexUser(Request $request)
 
     return view('tournaments.indexUser', compact('tournaments'));
 }
+
+/**
+     * Display a tournament view for a regular user.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function tournamentUser(Tournament $tournament)
+    {
+        $user = auth()->user();
+
+        if (!$tournament->users->contains('id', $user->id)) {
+            abort(403);
+        }
+
+        $predictedIds = Prediction::where('tournament_id', $tournament->id)
+            ->where('user_id', $user->id)
+            ->pluck('match_id');
+
+        $unpredictedMatches = $tournament->matches->whereNotIn('id', $predictedIds);
+
+        if ($unpredictedMatches->isNotEmpty()) {
+            return redirect()->route('predictions.create', [
+                'tournament' => $tournament->id,
+                'match_ids' => $unpredictedMatches->pluck('id')->toArray()
+            ]);
+        }
+
+        return view('tournaments.tournamentUser', compact('tournament'));
+    }
+
+
 
 public function create()
 {

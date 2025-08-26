@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Tournament;
+use App\Models\MatchModel;
 
 class PredictionController extends Controller
 {
@@ -25,6 +27,18 @@ class PredictionController extends Controller
     {
         //
     }
+
+    public function createForTournament(Request $request, Tournament $tournament)
+    {
+        $matchIds = $request->input('match_ids', []);
+        if (!is_array($matchIds)) {
+            $matchIds = explode(',', $matchIds);
+        }
+        $matches = MatchModel::whereIn('id', $matchIds)->get();
+
+        return view('predictions.createForTournament', compact('tournament', 'matches'));
+    }
+
 
     /**
      * Store a newly created resource in storage.

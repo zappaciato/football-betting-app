@@ -55,8 +55,10 @@
                         </div>
 
                         <div class="tournament-actions">
-                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="view">View</a>
-                            <a href="{{ route('tournaments.edit', $tournament->id) }}" class="edit">Edit</a>
+                            <a href="{{ route('tournaments.tournamentUser', $tournament->id) }}" class="view">View</a>
+                            @if(auth()->user()->id === 1)
+                                <a href="{{ route('tournaments.edit', $tournament->id) }}" class="edit">Edit</a>
+                            @endif
                         </div>
                     </div>
                 </div>

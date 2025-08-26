@@ -37,12 +37,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/homeee', [TournamentController::class, 'index'])->name('homeee'); //to jest do wywalenia
     Route::get('tournaments/user', [TournamentController::class, 'indexUser'])->name('tournaments.indexUser');
 
+    Route::get('tournaments/{tournament}/predictions/create', [PredictionController::class, 'createForTournament'])->name('predictions.create');
+    Route::get('tournaments/user/{tournament}', [TournamentController::class, 'tournamentUser'])->name('tournaments.tournamentUser');
 
     Route::get('matches/user', [MatchController::class, 'indexUser'])->name('matches.indexUser');
     Route::resource('matches', MatchController::class);
 
-        Route::get('tournaments/{tournament}/matches/{match}/predictions/create', [PredictionController::class, 'create'])->name('predictions.create');
+    Route::get('tournaments/{tournament}/matches/{match}/predictions/create', [PredictionController::class, 'create'])->name('predictions.create');
     Route::post('tournaments/{tournament}/matches/{match}/predictions', [PredictionController::class, 'store'])->name('predictions.store');
+
 
 //Admin routes
     Route::middleware('admin')->group(function () {

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\MatchModel;
+use App\Models\Prediction;
+use App\Models\Tournament;
 
 class PredictionController extends Controller
 {
@@ -21,9 +24,9 @@ class PredictionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Tournament $tournament, MatchModel $match)
     {
-        //
+        return view('predictions.create', compact('tournament', 'match'));
     }
 
     /**
@@ -32,9 +35,26 @@ class PredictionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Tournament $tournament, MatchModel $match)
     {
-        //
+                $validated = $request->validate([
+            'predicted_home' => ['required', 'integer', 'min:0'],
+            'predicted_away' => ['required', 'integer', 'min:0'],
+        ]);
+
+        Prediction::updateOrCreate(
+            [
+                'tournament_id' => $tournament->id,
+                'match_id' => $match->id,
+                'user_id' => $request->user()->id,
+            ],
+            [
+                'predicted_home' => $validated['predicted_home'],
+                'predicted_away' => $validated['predicted_away'],
+            ]
+        );
+
+        return redirect()->back()->with('status', 'Prediction saved.');
     }
 
     /**

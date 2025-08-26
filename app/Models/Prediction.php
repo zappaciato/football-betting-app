@@ -10,7 +10,7 @@ class Prediction extends Model
     use HasFactory;
     protected $fillable = [
         'user_id', 'match_id', 'tournament_id',
-        'predicted_home_score', 'predicted_away_score', 'points_awarded'
+        'predicted_home', 'predicted_away', 'points_awarded'
     ];
 
     public function match()

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\PredictionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('matches/user', [MatchController::class, 'indexUser'])->name('matches.indexUser');
     Route::resource('matches', MatchController::class);
+
+        Route::get('tournaments/{tournament}/matches/{match}/predictions/create', [PredictionController::class, 'create'])->name('predictions.create');
+    Route::post('tournaments/{tournament}/matches/{match}/predictions', [PredictionController::class, 'store'])->name('predictions.store');
 
 //Admin routes
     Route::middleware('admin')->group(function () {

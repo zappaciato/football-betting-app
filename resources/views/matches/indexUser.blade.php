@@ -18,19 +18,19 @@
 
         @else
         @if ($matches->isEmpty())
-    <div class="card p-4 text-center">
-      <h3 class="mb-2">{{ $emptyTitle ?? 'Brak danych' }}</h3>
-      <p class="text-muted mb-3">{{ $emptyText ?? 'Nie znaleziono żadnych meczów.' }}</p>
+    <div class="p-4 text-center border rounded">
+      <h3 class="mb-2 font-semibold">{{ $emptyTitle ?? 'Brak danych' }}</h3>
+      <p class="text-gray-500 mb-3">{{ $emptyText ?? 'No Matches found!' }}</p>
       @isset($emptyCtaUrl)
-        <a href="{{ $emptyCtaUrl }}" class="btn btn-primary">{{ $emptyCtaTxt ?? 'OK' }}</a>
+        <a href="{{ $emptyCtaUrl }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded">{{ $emptyCtaTxt ?? 'OK' }}</a>
       @endisset
     </div>
   @else
-    <ul class="list-group">
+    <ul class="divide-y divide-gray-200 border rounded">
       @foreach ($matches as $m)
-        <li class="list-group-item d-flex justify-content-between">
+        <li class="flex justify-between p-2">
           <span>{{ $m->name ?? 'Mecz #'.$m->id }}</span>
-          <span class="text-muted">{{ \Illuminate\Support\Str::of($m->match_date)->toString() }}</span>
+          <span class="text-gray-500">{{ \Illuminate\Support\Str::of($m->match_date)->toString() }}</span>
         </li>
       @endforeach
     </ul>
@@ -65,8 +65,7 @@
 
                     <td class="border border-gray-300 px-4 py-2">
                         @if($match->result_home !== null && $match->result_away !== null)
-                           <span style="font-size: 0.6rem; color: #1E40AF">{{$match->home_team}} </span> {{ $match->result_home }} - <span style="font-size: 0.6rem; color: #DC2626">{{$match->away_team}} </span> {{ $match->result_away }}
-                        @else
+                           <span class="text-xs text-blue-800">{{$match->home_team}} </span> {{ $match->result_home }} - <span class="text-xs text-red-600">{{$match->away_team}} </span> {{ $match->result_away }}
                             Not scored yet
                         @endif
                     </td>

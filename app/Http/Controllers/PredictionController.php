@@ -20,7 +20,7 @@ class PredictionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource. It creates the list of unpredicted matches. 
      *
      * @return \Illuminate\Http\Response
      */

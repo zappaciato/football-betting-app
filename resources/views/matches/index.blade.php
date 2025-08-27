@@ -42,7 +42,7 @@
 
                     <td class="border border-gray-300 px-4 py-2">
                         @if($match->result_home !== null && $match->result_away !== null)
-                           <span style="font-size: 0.6rem; color: #1E40AF">{{$match->home_team}} </span> {{ $match->result_home }} - <span style="font-size: 0.6rem; color: #DC2626">{{$match->away_team}} </span> {{ $match->result_away }}
+                          <span class="text-xs text-blue-800">{{$match->home_team}} </span> {{ $match->result_home }} - <span class="text-xs text-red-600">{{$match->away_team}} </span> {{ $match->result_away }}
                         @else
                             Not scored yet
                         @endif

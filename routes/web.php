@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\ScoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('matches/{match}/edit-score', [MatchController::class, 'editScore'])->name('matches.editScore');
         Route::put('matches/{match}/update-score', [MatchController::class, 'updateScore'])->name('matches.updateScore');
+        Route::post('matches/{match}/score', [ScoreController::class, 'updateMatchScores'])->name('scores.update');
         Route::resource('tournaments', TournamentController::class);
         Route::delete('tournaments/{tournament}/matches/{match}', [TournamentController::class, 'removeMatch'])
             ->name('tournaments.matches.remove');

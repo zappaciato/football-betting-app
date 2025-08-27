@@ -3,7 +3,7 @@
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center space-x-4">
                 <a href="{{ url('/') }}" class="text-lg font-semibold text-gray-800">
-                    {{ config('app.name', 'Laravel') }}
+                    {{ config('app.name', 'Football Betting App') }}
                 </a>
 
                 @auth

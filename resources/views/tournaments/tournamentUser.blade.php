@@ -6,23 +6,26 @@
     @if($tournament->description)
         <p class="mb-4">{{ $tournament->description }}</p>
     @endif
+    
+    @include('components.score_table', ['scores' => $scores])
     <ul class="space-y-2">
         @foreach($tournament->matches as $match)
             @php
-        // ponieważ dociągnęliśmy TYLKO predykcje tego usera, bierzemy pierwszą (albo null)
-        $pred = $match->predictions->first();
+                // Fetch the current user's prediction (if loaded)
+                $prediction = $match->predictions->first();
             @endphp
-<li>
-        {{ $match->home_team }} vs {{ $match->away_team }}
-        ({{ \Carbon\Carbon::parse($match->match_date)->format('M d, Y') }})
+            <li>
+                {{ $match->home_team }} vs {{ $match->away_team }}
+                ({{ \Carbon\Carbon::parse($match->match_date)->format('M d, Y') }})
 
-        @if($pred)
-            — Your prediction: {{ $pred->predicted_home }} : {{ $pred->predicted_away }}
-        @else
-            — <em>No prediction yet</em>
-        @endif
-    </li>
-@endforeach
+                        @if($prediction)
+                    — Your prediction: {{ $prediction->predicted_home }} : {{ $prediction->predicted_away }}
+                @else
+                    — <em>No prediction yet</em>
+                @endif
+            </li>
+        @endforeach
+
 </ul>
 </div>
 @endsection

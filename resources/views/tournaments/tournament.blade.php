@@ -40,6 +40,8 @@
                 @endif
             </div>
 
+            @include('components.score_table', ['scores' => $scores])
+
             <!-- Matches -->
 <div>
     <h2 class="text-lg font-semibold text-gray-800 mb-3">Matches</h2>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MatchModel;
+use App\Services\ScoreService;
 use Carbon\Carbon;
 
 
@@ -182,7 +183,12 @@ $data = $request->validate([
     $match->result_away = $data['result_away'];
     $match->save();
 
+    // Recalculate prediction points for this match
+    app(ScoreService::class)->updatePredictionsForMatch($match);
+
+
 return redirect()->route('matches.index')
-                 ->with('success', 'Match scores updated successfully!');
+                 ->with('success', 'Match scores updated successfully!')
+                 ->with('status', 'Predictions recalculated.');
 }
 }

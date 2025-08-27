@@ -65,8 +65,12 @@ public function indexUser(Request $request)
             abort(403);
         }
 
-        $predictedIds = Prediction::where('tournament_id', $tournament->id)
-            ->where('user_id', $user->id)
+        $tournament->load(['matches.predictions' => function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        }]);
+
+        $predictedIds = $tournament->matches
+            ->flatMap->predictions
             ->pluck('match_id');
 
         $unpredictedMatches = $tournament->matches->whereNotIn('id', $predictedIds);
@@ -81,7 +85,10 @@ public function indexUser(Request $request)
             ]);
         }
 
-        return view('tournaments.tournamentUser', compact('tournament'));
+                // compute scores for scoreboard
+        $scores = app(\App\Http\Controllers\ScoreController::class)->show($tournament);
+
+        return view('tournaments.tournamentUser', compact('tournament', 'scores'));
     }
 
 
@@ -125,9 +132,14 @@ public function store(Request $request)
     public function show($id)
     {
 
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::with(['users' => function ($query) {
+            $query->orderByDesc('total_points');
+        }])->findOrFail($id);
 
-        return view('tournaments.tournament', compact('tournament'));
+        // compute scores for scoreboard
+        $scores = app(\App\Http\Controllers\ScoreController::class)->show($tournament);
+
+        return view('tournaments.tournament', compact('tournament', 'scores'));
 
     }
 

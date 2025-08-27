@@ -14,7 +14,8 @@
         </div>
     @endif
 
-    <form action="{{ route('predictions.store', ['tournament' => $tournament->id, 'match' => $match->id]) }}" method="POST" class="space-y-4">
+    <form action="{{ route('predictions.store', ['tournament' => $tournament->id, 'match' => $match->id]) }}"
+          method="POST" class="space-y-4">
         @csrf
         <input type="hidden" name="match_ids" value='@json($matchIds)'>
         <div>

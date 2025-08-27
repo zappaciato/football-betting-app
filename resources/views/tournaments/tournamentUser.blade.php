@@ -34,12 +34,17 @@
                         @foreach($tournament->matches as $match)
                             @php
                                 $prediction = $match->predictions->first();
+
                             @endphp
-                            <li class="py-3 flex justify-between items-center text-sm text-gray-800">
-                                <div>
+
+                            <?php echo ($match->result_home === $prediction->predicted_home && $match->result_away === $prediction->predicted_away ) ? '<li class="text-sm text-red-600"> <p>Well done mate!</p>' : '<li class="text-sm text-grey-800">'; ?>
+
+                              <div>
                                     <span class="font-semibold">{{ $match->home_team }}</span>
+                                    <span class="font-semibold">{{ $match->result_home }}</span>
                                     vs
                                     <span class="font-semibold">{{ $match->away_team }}</span>
+                                    <span class="font-semibold">{{ $match->result_away }}</span>
                                     <span class="text-gray-500 ml-2">
                                         {{ \Carbon\Carbon::parse($match->match_date)->format('M d, Y') }}
                                     </span>

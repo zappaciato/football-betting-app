@@ -39,7 +39,7 @@
 
           <div class="overflow-hidden rounded-lg bg-white shadow transition hover:shadow-md">
             <img
-              src="https://source.unsplash.com/400x200/?tournament,sports"
+              src="/images/football.jpg"
               alt="{{ $tournament->name }}"
               class="h-40 w-full object-cover"
             />

@@ -15,8 +15,8 @@ class ScoreController extends Controller
     public function updateMatchScores(MatchModel $match)
     {
         $predictions = $match->predictions;
-
-        foreach ($predictions as $prediction) {
+        if($match->result_home !== null && $match->result_away !== null) {
+                    foreach ($predictions as $prediction) {
             $points = 0;
 
             if ($prediction->predicted_home === $match->result_home &&
@@ -32,7 +32,8 @@ class ScoreController extends Controller
             }
 
             $prediction->update(['points_awarded' => $points]);
-        }
+        }}
+
 
         return redirect()->back()->with('status', 'Points calculated for predictions.');
     }

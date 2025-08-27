@@ -30,14 +30,13 @@ class MatchController extends Controller
 
 public function indexUser(Request $request)
 {
-        $userId = $request->user()->id;
-
+    $userId = $request->user()->id; //zmienić na auth()
     // 1) Turnieje użytkownika
     $tournamentIds = \DB::table('tournament_users')
         ->where('user_id', $userId)
         ->pluck('tournament_id');
 
-    if ($tournamentIds->isEmpty()) {
+        if ($tournamentIds->isEmpty()) {
         // Brak turniejów -> pokaż pusty stan w tym samym widoku
         return view('matches.indexUser', [
             'matches'     => collect(),

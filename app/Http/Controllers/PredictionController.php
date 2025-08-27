@@ -111,9 +111,9 @@ class PredictionController extends Controller
                 'match_ids' => $matchIds,
             ])->with('status', 'Prediction saved.');
         }
-
+        $scores = app(\App\Http\Controllers\ScoreController::class)->show($tournament);
         // return redirect()->route('tournaments.tournamentUser', $tournament)->with('status', 'Prediction saved.');
-            return view('tournaments.tournamentUser', compact('tournament', 'prediction'));
+            return view('tournaments.tournamentUser', compact('tournament', 'prediction', 'scores'));
     }
 
     /**

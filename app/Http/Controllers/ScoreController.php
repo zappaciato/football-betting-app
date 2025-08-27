@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\MatchModel;
+use App\Models\Tournament;
+use App\Models\Prediction;
+use Illuminate\Support\Facades\DB;
 
 class ScoreController extends Controller
 {

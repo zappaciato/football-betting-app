@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\MatchModel;
 use App\Services\ScoreService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class MatchController extends Controller
